@@ -54,7 +54,7 @@ with tf.Session() as sess:
 
 ### `tf.placeholder_with_default(input, shape, name=None)` {#placeholder_with_default}
 
-A placeholder op that passes though `input` when its output is not fed.
+A placeholder op that passes through `input` when its output is not fed.
 
 ##### Args:
 
@@ -1636,15 +1636,15 @@ Then the output is a dictionary:
   "kw": SparseTensor(
       indices=[[0, 0], [0, 1], [1, 0]],
       values=["knit", "big", "emmy"]
-      shape=[2, 2]),
+      dense_shape=[2, 2]),
   "dank": SparseTensor(
       indices=[[1, 0]],
       values=[42],
-      shape=[2, 1]),
+      dense_shape=[2, 1]),
   "gps": SparseTensor(
       indices=[],
       values=[],
-      shape=[2, 0]),
+      dense_shape=[2, 0]),
 }
 ```
 
@@ -1713,7 +1713,7 @@ Then the output is a dictionary:
   "sparse": SparseTensor(
       indices=[[0, 3], [0, 20], [1, 42]],
       values=[0.5, -1.0, 0.0]
-      shape=[2, 100]),
+      dense_shape=[2, 100]),
 }
 ```
 
@@ -1754,6 +1754,9 @@ For `SparseTensor`s, the first (batch) column of the indices matrix is removed
 (the indices matrix is a column vector), the values vector is unchanged, and
 the first (`batch_size`) entry of the shape vector is removed (it is now a
 single element vector).
+
+One might see performance advantages by batching `Example` protos with
+`parse_example` instead of using this function directly.
 
 ##### Args:
 

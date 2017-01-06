@@ -25,7 +25,7 @@ import os
 import time
 
 from tensorflow.contrib.framework import deprecated
-from tensorflow.contrib.framework import deprecated_arg_values
+from tensorflow.contrib.framework import deprecated_args
 from tensorflow.contrib.learn.python.learn import evaluable
 from tensorflow.contrib.learn.python.learn import export_strategy
 from tensorflow.contrib.learn.python.learn import monitors
@@ -50,7 +50,7 @@ class Experiment(object):
 
   # TODO(ispir): remove delay_workers_by_global_step and make global step based
   # waiting as only behaviour.
-  @deprecated_arg_values(
+  @deprecated_args(
       "2016-10-23",
       "local_eval_frequency is deprecated as local_run will be renamed to "
       "train_and_evaluate. Use min_eval_frequency and call train_and_evaluate "
@@ -59,7 +59,7 @@ class Experiment(object):
       "available. In contrast, the default for local_eval_frequency is None, "
       "resulting in evaluation occurring only after training has completed. "
       "min_eval_frequency is ignored when calling the deprecated local_run.",
-      local_eval_frequency=None)
+      "local_eval_frequency")
   def __init__(self,
                estimator,
                train_input_fn,
@@ -68,6 +68,7 @@ class Experiment(object):
                train_steps=None,
                eval_steps=100,
                train_monitors=None,
+               evaluate_hooks=None,
                local_eval_frequency=None,
                eval_delay_secs=120,
                continuous_eval_throttle_secs=60,
@@ -94,6 +95,8 @@ class Experiment(object):
         is raised), or for `eval_steps` steps, if specified.
       train_monitors: A list of monitors to pass to the `Estimator`'s `fit`
         function.
+      evaluate_hooks: A list of `SessionRunHook` hooks to pass to the
+        `Estimator`'s `evaluate` function.
       local_eval_frequency: Frequency of running eval in steps,
         when running locally. If `None`, runs evaluation only at the end of
         training.
@@ -124,6 +127,7 @@ class Experiment(object):
     self._train_steps = train_steps
     self._eval_steps = eval_steps
     self._train_monitors = train_monitors or []
+    self._evaluate_hooks = evaluate_hooks
     self._local_eval_frequency = local_eval_frequency
     self._eval_delay_secs = eval_delay_secs
     self._continuous_eval_throttle_secs = continuous_eval_throttle_secs
@@ -218,7 +222,8 @@ class Experiment(object):
     return self._estimator.evaluate(input_fn=self._eval_input_fn,
                                     steps=self._eval_steps,
                                     metrics=self._eval_metrics,
-                                    name="one_pass")
+                                    name="one_pass",
+                                    hooks=self._evaluate_hooks)
 
   @deprecated(
       "2016-10-23",

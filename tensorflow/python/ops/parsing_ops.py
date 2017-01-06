@@ -328,15 +328,15 @@ def parse_example(serialized, features, name=None, example_names=None):
     "kw": SparseTensor(
         indices=[[0, 0], [0, 1], [1, 0]],
         values=["knit", "big", "emmy"]
-        shape=[2, 2]),
+        dense_shape=[2, 2]),
     "dank": SparseTensor(
         indices=[[1, 0]],
         values=[42],
-        shape=[2, 1]),
+        dense_shape=[2, 1]),
     "gps": SparseTensor(
         indices=[],
         values=[],
-        shape=[2, 0]),
+        dense_shape=[2, 0]),
   }
   ```
 
@@ -405,7 +405,7 @@ def parse_example(serialized, features, name=None, example_names=None):
     "sparse": SparseTensor(
         indices=[[0, 3], [0, 20], [1, 42]],
         values=[0.5, -1.0, 0.0]
-        shape=[2, 100]),
+        dense_shape=[2, 100]),
   }
   ```
 
@@ -557,6 +557,9 @@ def parse_single_example(serialized, features, name=None, example_names=None):
   the first (`batch_size`) entry of the shape vector is removed (it is now a
   single element vector).
 
+  One might see performance advantages by batching `Example` protos with
+  `parse_example` instead of using this function directly.
+
   Args:
     serialized: A scalar string Tensor, a single serialized Example.
       See `_parse_single_example_raw` documentation for more details.
@@ -667,7 +670,7 @@ def _parse_single_example_raw(serialized,
             array_ops.slice(outputs[s].indices,
                             [0, 1], [-1, -1], name="Slice_Indices_%s" % s_name),
             outputs[s].values,
-            array_ops.slice(outputs[s].shape,
+            array_ops.slice(outputs[s].dense_shape,
                             [1], [-1], name="Squeeze_Shape_%s" % s_name))
     return outputs
 

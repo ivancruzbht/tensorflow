@@ -64,6 +64,12 @@ config_setting(
     visibility = ["//visibility:public"],
 )
 
+config_setting(
+    name = "linux_x86_64",
+    values = {"cpu": "k8"},
+    visibility = ["//visibility:public"],
+)
+
 package_group(
     name = "internal",
     packages = ["//tensorflow/..."],
@@ -112,6 +118,7 @@ filegroup(
         "//tensorflow/contrib/framework:all_files",
         "//tensorflow/contrib/graph_editor:all_files",
         "//tensorflow/contrib/grid_rnn:all_files",
+        "//tensorflow/contrib/image:all_files",
         "//tensorflow/contrib/input_pipeline:all_files",
         "//tensorflow/contrib/input_pipeline/kernels:all_files",
         "//tensorflow/contrib/integrate:all_files",
@@ -126,6 +133,7 @@ filegroup(
         "//tensorflow/contrib/losses:all_files",
         "//tensorflow/contrib/metrics:all_files",
         "//tensorflow/contrib/ndlstm:all_files",
+        "//tensorflow/contrib/nn:all_files",
         "//tensorflow/contrib/opt:all_files",
         "//tensorflow/contrib/rnn:all_files",
         "//tensorflow/contrib/seq2seq:all_files",
@@ -171,14 +179,6 @@ filegroup(
         "//tensorflow/java:all_files",
         "//tensorflow/java/src/main/java/org/tensorflow/examples:all_files",
         "//tensorflow/java/src/main/native:all_files",
-        "//tensorflow/models/embedding:all_files",
-        "//tensorflow/models/image/alexnet:all_files",
-        "//tensorflow/models/image/cifar10:all_files",
-        "//tensorflow/models/image/imagenet:all_files",
-        "//tensorflow/models/image/mnist:all_files",
-        "//tensorflow/models/rnn:all_files",
-        "//tensorflow/models/rnn/ptb:all_files",
-        "//tensorflow/models/rnn/translate:all_files",
         "//tensorflow/python:all_files",
         "//tensorflow/python/debug:all_files",
         "//tensorflow/python/kernel_tests:all_files",
@@ -194,6 +194,7 @@ filegroup(
         "//tensorflow/tensorboard/lib:all_files",
         "//tensorflow/tensorboard/lib/python:all_files",
         "//tensorflow/tensorboard/scripts:all_files",
+        "//tensorflow/tools/common:all_files",
         "//tensorflow/tools/dist_test/server:all_files",
         "//tensorflow/tools/docker:all_files",
         "//tensorflow/tools/docker/notebooks:all_files",
