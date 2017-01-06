@@ -125,11 +125,23 @@ JNIEXPORT jint JNICALL TENSORFLOW_METHOD(initializeTensorFlow)(
       AAssetManager_fromJava(env, java_asset_manager);
   LOG(INFO) << "Acquired AssetManager.";
 
+  //Check node names
+  int node_count = tensorflow_graph.node_size();
+  LOG(INFO) << "Node count (before): " << node_count;
+
   LOG(INFO) << "Reading file to proto: " << model_str;
   ReadFileToProtoOrDie(asset_manager, model_str.c_str(), &tensorflow_graph);
+  
+  node_count = tensorflow_graph.node_size();
+  LOG(INFO) << "Node count (after): " << node_count;
 
   LOG(INFO) << "Creating session.";
   tensorflow::Status s = session->Create(tensorflow_graph);
+
+  //for (int i = 0; i < node_count; i++) {
+  //  auto n = tensorflow_graph.node(i);
+  //  LOG(INFO) << n.name();
+  //}
 
   // Clear the proto to save memory space.
   tensorflow_graph.Clear();

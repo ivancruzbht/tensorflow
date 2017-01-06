@@ -78,8 +78,9 @@ bool IsAsset(const char* const filename) {
 void ReadFileToProtoOrDie(AAssetManager* const asset_manager,
                           const char* const filename,
                           google::protobuf::MessageLite* message) {
+  LOG(INFO) << "IOCG Checking Protobuf...";
   if (!IsAsset(filename)) {
-    VLOG(0) << "Opening file: " << filename;
+    LOG(INFO) << "Opening file: " << filename;
     CHECK(PortableReadFileToProto(filename, message));
     return;
   }
@@ -102,7 +103,7 @@ void ReadFileToProtoOrDie(AAssetManager* const asset_manager,
     if (length < (64 * 1024 * 1024)) {
       // If it has a file descriptor that means it can be memmapped directly
       // from the APK.
-      VLOG(0) << "Opening asset " << asset_filename
+      LOG(INFO) << "Opening asset " << asset_filename
               << " from disk with zero-copy.";
       adaptor.Skip(start);
       CHECK(message->ParseFromZeroCopyStream(&adaptor));
@@ -117,7 +118,7 @@ void ReadFileToProtoOrDie(AAssetManager* const asset_manager,
   } else {
     // It may be compressed, in which case we have to uncompress
     // it to memory first.
-    VLOG(0) << "Opening asset " << asset_filename << " from disk with copy.";
+    LOG(INFO) << "Opening asset " << asset_filename << " from disk with copy.";
     const off_t data_size = AAsset_getLength(asset);
     const void* const memory = AAsset_getBuffer(asset);
     CHECK(message->ParseFromArray(memory, data_size));
