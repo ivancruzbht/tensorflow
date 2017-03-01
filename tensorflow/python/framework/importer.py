@@ -151,14 +151,15 @@ def _FindAttrInOpDef(attr_name, op_def):
 
 def import_graph_def(graph_def, input_map=None, return_elements=None,
                      name=None, op_dict=None, producer_op_list=None):
-  """Imports the TensorFlow graph in `graph_def` into the Python `Graph`.
+  """Imports the graph from `graph_def` into the current default `Graph`.
 
   This function provides a way to import a serialized TensorFlow
   [`GraphDef`](https://www.tensorflow.org/code/tensorflow/core/framework/graph.proto)
   protocol buffer, and extract individual objects in the `GraphDef` as
-  [`Tensor`](#Tensor) and [`Operation`](#Operation) objects. See
-  [`Graph.as_graph_def()`](#Graph.as_graph_def) for a way to create a
-  `GraphDef` proto.
+  @{tf.Tensor} and @{tf.Operation} objects. Once extracted,
+  these objects are placed into the current default `Graph`. See
+  @{tf.Graph.as_graph_def} for a way to create a `GraphDef`
+  proto.
 
   Args:
     graph_def: A `GraphDef` proto containing operations to be imported into
@@ -241,11 +242,13 @@ def import_graph_def(graph_def, input_map=None, return_elements=None,
     # more nuanced.
     g.graph_def_versions.CopyFrom(graph_def.versions)
 
-    if input_map:
+    if not all(isinstance(v, ops.Tensor) for v in input_map.values()):
       if not scope:
         # The caller must have passed `name=''`.
-        raise ValueError('tf.import_graph_def() requires a non-empty `name` '
-                         'if `input_map` is used.')
+        raise ValueError(
+            'tf.import_graph_def() requires a non-empty `name` if `input_map` '
+            'contains non-Tensor values. Try calling tf.convert_to_tensor() on '
+            '`input_map` values before calling tf.import_graph_def().')
       with ops.name_scope('_inputs'):
         input_map = {k: ops.convert_to_tensor(v) for k, v in input_map.items()}
 
